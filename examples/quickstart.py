@@ -1,4 +1,4 @@
-"""Quick start for the Polymarket BTC Up/Down 5m sample. Run from the dataset directory."""
+"""Quick start for the Polymarket BTC Up/Down 5m dataset. Run from the dataset directory."""
 import polars as pl
 
 l2 = pl.scan_parquet("l2/*/*.parquet")
@@ -37,4 +37,5 @@ for col in ["start_time", "end_time"]:
 m = m.with_columns(
     pl.when(pl.col("end_time_twap") >= pl.col("start_time_twap")).then(pl.lit("yes")).otherwise(pl.lit("no")).alias("twap_outcome")
 )
-print((m["twap_outcome"] == m["winning_outcome"]).sum(), "of", m.height, "outcomes reproduced")
+m = m.filter(pl.col("winning_outcome").is_not_null())
+print(m.group_by(pl.col("start_time").dt.date()).agg((pl.col("twap_outcome") == pl.col("winning_outcome")).mean().alias("match")).sort("start_time"))

@@ -1,12 +1,12 @@
-# Polymarket Historical Data
+# Polymarket Historical Data: BTC Up/Down 5m Research Dataset
 
-Free Polymarket historical order book data: tick-level L2 updates, trades, on-chain fills and the
-Chainlink TWAP that crypto Up/Down markets resolve on. Download a full day for free, then get
-every market from [PMData](https://pmdata.dev).
+**Everything you need to research Polymarket BTC Up/Down 5m markets in one dataset: tick-level L2 order books, on-chain trades, and the Chainlink price they settle on.**
 
-| Free sample | Where |
+14 consecutive days (2026-08-08 to 2026-08-21), all 4,032 BTC Up/Down 5m markets. Every order book update as Polymarket sent it, every trade and on-chain fill, plus Chainlink Data Streams and the 60s TWAP that decides each market. Collected colocated with Polymarket in AWS London at 4.6 ms median latency, over two redundant WebSocket connections per market.
+
+| Free dataset | Where |
 | --- | --- |
-| BTC Up/Down 5m, 2026-10-01: 288 markets, 49.9M order book events, 418K trades, 1.1M on-chain fills, Chainlink BTC/USD price and 60s TWAP (519 MB Parquet) | [Hugging Face](https://huggingface.co/datasets/mileswangs/polymarket-btc-updown-5m-orderbook-tick-data) · [Kaggle](https://www.kaggle.com/datasets/sumire2/polymarket-btc-updown-5m-order-book-tick-data) |
+| BTC Up/Down 5m, 2026-08-08 to 2026-08-21: 4,032 markets, 457M order book events, 6.7M trades, 21.3M on-chain fills, Chainlink BTC/USD price and 60s TWAP (5.6 GB Parquet) | [Hugging Face](https://huggingface.co/datasets/mileswangs/polymarket-btc-updown-5m-orderbook-tick-data) · [Kaggle](https://www.kaggle.com/datasets/sumire2/polymarket-btc-updown-5m-order-book-tick-data) |
 
 ## Why this data
 
@@ -20,8 +20,8 @@ PMData records it:
   Collected in AWS London, colocated with Polymarket's exchange (4.6 ms median latency), on a
   clock synced to [AWS PHC](https://aws.amazon.com/blogs/compute/its-about-time-microsecond-accurate-clocks-on-amazon-ec2-instances/).
 - Two WebSocket connections per market, on separate networks.
-- Chainlink Data Streams and TWAP, collected directly from Chainlink. The 60s TWAP reproduces
-  all 288 outcomes in the sample.
+- Chainlink Data Streams and TWAP, collected directly from Chainlink. From 2026-08-14 on, the 60s
+  TWAP reproduces 2,263 of 2,265 recorded outcomes.
 
 ## Quick start
 
@@ -32,7 +32,9 @@ cd data && python ../examples/quickstart.py
 ```
 
 [`examples/quickstart.py`](examples/quickstart.py) measures collection latency, loads one market's
-order book events, and reproduces every market's outcome from the Chainlink TWAP.
+order book events, and checks each market's outcome against the Chainlink TWAP. The same steps,
+with charts, are in [`examples/quickstart.ipynb`](examples/quickstart.ipynb) and in a
+[Kaggle notebook](https://www.kaggle.com/code/sumire2/polymarket-btc-up-down-5m-order-book-quick-start) that runs on the dataset directly.
 
 For fill-level backtests with queue position and latency, use
 [pm-hftbacktest](https://github.com/mileswangs/pm-hftbacktest). Across 547 BTC 5-minute markets,
@@ -47,7 +49,7 @@ its backtests [matched live trading in 95.32% of markets](https://pmdata.dev/res
 ```python
 import pandas as pd
 
-url = "https://api.pmdata.dev/v1/polymarket/l2/2026/10/01/btc-updown-5m-1790812800.parquet"
+url = "https://api.pmdata.dev/v1/polymarket/l2/2026/08/08/btc-updown-5m-1786147200.parquet"
 df = pd.read_parquet(url, storage_options={"api_key": "<YOUR_API_KEY>", "User-Agent": "Mozilla/5.0"})
 ```
 
